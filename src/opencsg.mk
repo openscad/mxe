@@ -27,4 +27,21 @@ define $(PKG)_BUILD
     $(INSTALL) -m755 '$(1)/example/release/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
 endef
 
-$(PKG)_BUILD_SHARED =
+define $(PKG)_BUILD_SHARED
+    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' src.pro
+    $(MAKE) -C '$(1)/src' -j '$(JOBS)'
+
+    # use 'lib' prefix like most other shared libraries in MXE
+    mv '$(1)/lib/opencsg1.dll' '$(1)/lib/libopencsg1.dll'
+    # use MXE-style import-library name libfoo.dll.a 
+    # ('make' used -Wl,--out-implib,libopencsg1.a)
+    mv '$(1)/lib/libopencsg1.a' '$(1)/lib/libopencsg1.dll.a'
+
+    $(INSTALL) -m644 '$(1)/include/opencsg.h' '$(PREFIX)/$(TARGET)/include/'
+    $(INSTALL) -m644 '$(1)/lib/opencsg1.dll' '$(PREFIX)/$(TARGET)/bin/'
+    $(INSTALL) -m644 '$(1)/lib/libopencsg1.dll.a' '$(PREFIX)/$(TARGET)/lib/'
+
+    cd '$(1)/example' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' example.pro
+    $(MAKE) -C '$(1)/example' -j '$(JOBS)'
+    $(INSTALL) -m755 '$(1)/example/release/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
+endef
