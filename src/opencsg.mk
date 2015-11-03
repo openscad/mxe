@@ -32,14 +32,14 @@ define $(PKG)_BUILD_SHARED
     $(MAKE) -C '$(1)/src' -j '$(JOBS)'
 
     # use 'lib' prefix like most other shared libraries in MXE
-    mv '$(1)/lib/opencsg1.dll' '$(1)/lib/libopencsg1.dll'
+    mv '$(1)/lib/opencsg1.dll' '$(1)/lib/libopencsg-1.dll'
     # use MXE-style import-library name libfoo.dll.a 
     # ('make' used -Wl,--out-implib,libopencsg1.a)
-    mv '$(1)/lib/libopencsg1.a' '$(1)/lib/libopencsg1.dll.a'
+    mv '$(1)/lib/libopencsg1.a' '$(1)/lib/libopencsg.dll.a'
 
     $(INSTALL) -m644 '$(1)/include/opencsg.h' '$(PREFIX)/$(TARGET)/include/'
-    $(INSTALL) -m644 '$(1)/lib/opencsg1.dll' '$(PREFIX)/$(TARGET)/bin/'
-    $(INSTALL) -m644 '$(1)/lib/libopencsg1.dll.a' '$(PREFIX)/$(TARGET)/lib/'
+    $(INSTALL) -m644 '$(1)/lib/libopencsg-1.dll' '$(PREFIX)/$(TARGET)/bin/'
+    $(INSTALL) -m644 '$(1)/lib/libopencsg.dll.a' '$(PREFIX)/$(TARGET)/lib/'
 
     cd '$(1)/example' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' example.pro
     $(MAKE) -C '$(1)/example' -j '$(JOBS)'
