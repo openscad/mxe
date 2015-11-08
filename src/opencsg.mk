@@ -28,14 +28,17 @@ define $(PKG)_BUILD
 endef
 
 define $(PKG)_BUILD_SHARED
-    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' src.pro
-    $(MAKE) -C '$(1)/src' -j '$(JOBS)'
+    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' CONFIG+=dll src.pro
 
-    # use 'lib' prefix like most other shared libraries in MXE
-    mv '$(1)/lib/opencsg1.dll' '$(1)/lib/libopencsg-1.dll'
-    # use MXE-style import-library name libfoo.dll.a 
-    # ('make' used -Wl,--out-implib,libopencsg1.a)
-    mv '$(1)/lib/libopencsg1.a' '$(1)/lib/libopencsg.dll.a'
+    # make the names match MXE/cygwin standard convention, overriding qmake
+    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Release' 
+    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile.Release' 
+    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile' 
+    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile' 
+    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Debug' 
+    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile.Debug' 
+
+    $(MAKE) -C '$(1)/src' -j '$(JOBS)'
 
     $(INSTALL) -m644 '$(1)/include/opencsg.h' '$(PREFIX)/$(TARGET)/include/'
     $(INSTALL) -m644 '$(1)/lib/libopencsg-1.dll' '$(PREFIX)/$(TARGET)/bin/'
