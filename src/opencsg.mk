@@ -31,4 +31,24 @@ define $(PKG)_BUILD
     $(INSTALL) -m755 '$(SOURCE_DIR)/example/release/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
 endef
 
-$(PKG)_BUILD_SHARED =
+define $(PKG)_BUILD_SHARED
+    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' CONFIG+=dll src.pro
+
+    # make the names match MXE/cygwin standard convention, overriding qmake
+    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Release' 
+    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile.Release' 
+    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile' 
+    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile' 
+    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Debug' 
+    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile.Debug' 
+
+    $(MAKE) -C '$(1)/src' -j '$(JOBS)'
+
+    $(INSTALL) -m644 '$(1)/include/opencsg.h' '$(PREFIX)/$(TARGET)/include/'
+    $(INSTALL) -m644 '$(1)/lib/libopencsg-1.dll' '$(PREFIX)/$(TARGET)/bin/'
+    $(INSTALL) -m644 '$(1)/lib/libopencsg.dll.a' '$(PREFIX)/$(TARGET)/lib/'
+
+    cd '$(1)/example' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' example.pro
+    $(MAKE) -C '$(1)/example' -j '$(JOBS)'
+    $(INSTALL) -m755 '$(1)/example/release/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
+endef
