@@ -1,0 +1,11 @@
+--- a/Include/Common/NMR_StringUtils.h	2026-02-24 18:23:52.000000000 +0100
++++ b/Include/Common/NMR_StringUtils.h	2026-10-25 23:51:19.093231183 +0100
+@@ -37,7 +37,7 @@
+ #include "Common/NMR_Types.h"
+ #include "Common/NMR_Local.h"
+ 
+-#include <fast_float/fast_float.h>
++#include <fast_float.h>
+ 
+ #include <string>
+ #include <string.h>
