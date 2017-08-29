@@ -1,0 +1,22 @@
+--- lib3mf.git/Source/Common/NMR_UUID.cpp.orig	2018-09-30 23:59:38.552684348 +0200
++++ lib3mf.git/Source/Common/NMR_UUID.cpp	2018-10-01 00:57:28.664712627 +0200
+@@ -37,8 +37,8 @@
+ 
+ #include <algorithm>
+ 
+-#if defined(_WIN32) && !defined(__MINGW32__)
+-#include <Objbase.h>
++#if defined(_WIN32)
++#include <objbase.h>
+ #include <iomanip>
+ #else
+ #include <uuid/uuid.h>
+@@ -48,7 +48,7 @@
+ {
+ 	CUUID::CUUID()
+ 	{
+-#if defined(_WIN32) && !defined(__MINGW32__)
++#if defined(_WIN32)
+ 		GUID guid;
+ 		if (CoCreateGuid(&guid) != S_OK)
+ 			throw CNMRException(NMR_ERROR_UUIDGENERATIONFAILED);
