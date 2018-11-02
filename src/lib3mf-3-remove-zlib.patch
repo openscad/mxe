@@ -1,0 +1,22 @@
+diff --git a/Source/CMakeLists.txt b/Source/CMakeLists.txt
+index cd23835..2607628 100644
+--- a/Source/CMakeLists.txt
++++ b/Source/CMakeLists.txt
+@@ -77,17 +77,6 @@ ${SRCS_COM}
+ ./Source/Common/Platform/NMR_XmlReader.cpp
+ ./Source/Common/Platform/NMR_XmlWriter.cpp
+ ./Source/Common/Platform/NMR_XmlWriter_Native.cpp
+-./Source/Libraries/zlib/adler32.c
+-./Source/Libraries/zlib/compress.c
+-./Source/Libraries/zlib/crc32.c
+-./Source/Libraries/zlib/deflate.c
+-./Source/Libraries/zlib/infback.c
+-./Source/Libraries/zlib/inffast.c
+-./Source/Libraries/zlib/inflate.c
+-./Source/Libraries/zlib/inftrees.c
+-./Source/Libraries/zlib/trees.c
+-./Source/Libraries/zlib/uncompr.c
+-./Source/Libraries/zlib/zutil.c
+ ./Source/Model/Classes/NMR_PackageResourceID.cpp
+ ./Source/Model/Classes/NMR_Model.cpp
+ ./Source/Model/Classes/NMR_ModelAttachment.cpp
