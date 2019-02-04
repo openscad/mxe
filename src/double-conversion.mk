@@ -2,29 +2,17 @@
 # See index.html for further information.
 
 PKG             := double-conversion
+$(PKG)_WEBSITE  := https://github.com/google/double-conversion/
 $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 3.1.1
-$(PKG)_CHECKSUM := eeaf851838637010e29d8062b5bd191fb45d269e
-$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
-$(PKG)_FILE     := $($(PKG)_SUBDIR).tar.gz
-$(PKG)_URL      := https://github.com/google/$(PKG)/archive/v$($(PKG)_VERSION).tar.gz
+$(PKG)_CHECKSUM := c49a6b3fa9c917f827b156c8e0799ece88ae50440487a99fc2f284cfd357a5b9
+$(PKG)_GH_CONF  := google/double-conversion/tags, v
 $(PKG)_DEPS     :=
 
-$(PKG)_CMAKE_FLAGS :=
-
-define $(PKG)_UPDATE
-    $(WGET) -q -O- 'https://github.com/google/double-conversion/tags' | \
-    $(SED) -n 's|.*releases/tag/v\([^"]*\).*|\1|p' | $(SORT) -V | \
-    tail -1
-endef
-
 define $(PKG)_BUILD
-    cd '$(1)' && cmake \
-        $($(PKG)_CMAKE_FLAGS) \
-        -DBUILD_TESTING=no \
-        -DCMAKE_TOOLCHAIN_FILE='$(CMAKE_TOOLCHAIN_FILE)' \
-        .
-
-    $(MAKE) -C '$(1)' -j '$(JOBS)' VERBOSE=1
-    $(MAKE) -C '$(1)' -j '1' VERBOSE=1 DESTDIR='$(3)' install
+    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_TESTING=OFF
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef
