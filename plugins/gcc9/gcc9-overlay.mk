@@ -13,12 +13,12 @@ $(PKG)_VERSION  := 0.16.1
 $(PKG)_CHECKSUM := 412538bb65c799ac98e17e8cfcdacbb257a57362acfaaff254b0fcae970126d2
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.bz2
-$(PKG)_URL      := http://isl.gforge.inria.fr/$($(PKG)_FILE)
+$(PKG)_URL      := https://isl.gforge.inria.fr/$($(PKG)_FILE)
 $(PKG)_URL_2    := https://gcc.gnu.org/pub/gcc/infrastructure/$($(PKG)_FILE)
 
 PKG             := gcc
-$(PKG)_VERSION  := 9.1.0
-$(PKG)_CHECKSUM := 79a66834e96a6050d8fe78db2c3b32fb285b230b855d0a66288235bc04b327a0
+$(PKG)_VERSION  := 9.3.0
+$(PKG)_CHECKSUM := 71e197867611f6054aa1119b13a0c0abac12834765fe2d81f35ac57f84f742d1
 $(PKG)_SUBDIR   := gcc-$($(PKG)_VERSION)
 $(PKG)_FILE     := gcc-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://ftp.gnu.org/gnu/gcc/gcc-$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -33,3 +33,6 @@ db_PATCHES := $(TOP_DIR)/src/db-1-fix-including-winioctl-h-lowcase.patch
 libssh_EXTRA_WARNINGS = -Wno-error=implicit-fallthrough
 gtkimageview_EXTRA_WARNINGS = -Wno-error=misleading-indentation
 guile_EXTRA_WARNINGS = -Wno-error=misleading-indentation
+gtkmm2_EXTRA_WARNINGS = -Wno-error=cast-function-type
+gtkmm3_EXTRA_WARNINGS = -Wno-error=cast-function-type
+gtkglextmm_EXTRA_WARNINGS = -Wno-error=cast-function-type

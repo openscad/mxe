@@ -3,10 +3,10 @@
 PKG             := gettext
 $(PKG)_WEBSITE  := https://www.gnu.org/software/gettext/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.20.1
-$(PKG)_CHECKSUM := 53f02fbbec9e798b0faaf7c73272f83608e835c6288dd58be6c9bb54624a3800
+$(PKG)_VERSION  := 0.21
+$(PKG)_CHECKSUM := 435b546e3880ab767c967c0731b20629a0cb0ba620e6bac2f590f401c10ebb45
 $(PKG)_SUBDIR   := gettext-$($(PKG)_VERSION)
-$(PKG)_FILE     := gettext-$($(PKG)_VERSION).tar.xz
+$(PKG)_FILE     := gettext-$($(PKG)_VERSION).tar.lz
 $(PKG)_URL      := https://ftp.gnu.org/gnu/gettext/$($(PKG)_FILE)
 $(PKG)_URL_2    := https://ftpmirror.gnu.org/gettext/$($(PKG)_FILE)
 # native gettext isn't technically required, but downstream

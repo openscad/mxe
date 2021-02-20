@@ -3,8 +3,8 @@
 PKG             := nettle
 $(PKG)_WEBSITE  := https://www.lysator.liu.se/~nisse/nettle/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.5.1
-$(PKG)_CHECKSUM := 75cca1998761b02e16f2db56da52992aef622bf55a3b45ec538bc2eedadc9419
+$(PKG)_VERSION  := 3.7.1
+$(PKG)_CHECKSUM := 156621427c7b00a75ff9b34b770b95d34f80ef7a55c3407de94b16cbf436c42e
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := https://www.lysator.liu.se/~nisse/archive/$($(PKG)_FILE)

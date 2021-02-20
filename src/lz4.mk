@@ -4,8 +4,8 @@ PKG             := lz4
 $(PKG)_WEBSITE  := https://github.com/$(PKG)/$(PKG)
 $(PKG)_DESCR    := lossless compression algorithm optimized for speed
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.9.0
-$(PKG)_CHECKSUM := f8b6d5662fa534bd61227d313535721ae41a68c9d84058b7b7d86e143572dcfb
+$(PKG)_VERSION  := 1.9.3
+$(PKG)_CHECKSUM := 030644df4611007ff7dc962d981f390361e6c97a34e5cbc393ddfbe019ffe2c1
 $(PKG)_GH_CONF  := lz4/lz4/tags,v
 $(PKG)_DEPS     := cc
 
@@ -14,7 +14,7 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake \
         -DCMAKE_INSTALL_BINDIR=$(BUILD_DIR)/null \
         -DCMAKE_INSTALL_MANDIR=$(BUILD_DIR)/null \
-        '$(SOURCE_DIR)/contrib/cmake_unofficial'
+        '$(SOURCE_DIR)/build/cmake'
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
     $(if $(BUILD_SHARED), $(INSTALL) '$(BUILD_DIR)/liblz4.dll' '$(PREFIX)/$(TARGET)/bin/')

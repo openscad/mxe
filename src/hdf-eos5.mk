@@ -4,11 +4,11 @@ PKG             := hdf-eos5
 $(PKG)_WEBSITE  := https://hdfeos.org/software/library.php
 $(PKG)_DESCR    := HDF-EOS5
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.15
-$(PKG)_CHECKSUM := 119588067abf139c1c600a4519b880d04a3933049576c88acdc8ff6fc71803dd
+$(PKG)_VERSION  := 1.16
+$(PKG)_CHECKSUM := 7054de24b90b6d9533329ef8dc89912c5227c83fb447792103279364e13dd452
 $(PKG)_SUBDIR   := hdfeos5
 $(PKG)_FILE     := HDF-EOS5.$($(PKG)_VERSION).tar.Z
-$(PKG)_URL      := ftp://edhs1.gsfc.nasa.gov/edhs/hdfeos5/latest_release/$($(PKG)_FILE)
+$(PKG)_URL      := https://observer.gsfc.nasa.gov/ftp/edhs/hdfeos5/latest_release/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc hdf5
 
 define $(PKG)_UPDATE
@@ -17,18 +17,24 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    cd '$(1)' && chmod -R ugo+w .
-    cd '$(1)' && autoconf
-    cd '$(1)' && ./configure \
+    # gctp is also present in hdf-eos2 and some headers are also
+    # duplicated, so install to sub-directories
+    cd '$(SOURCE_DIR)' && chmod -R ugo+w .
+    cd '$(SOURCE_DIR)' && autoconf
+    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
         $(MXE_CONFIGURE_OPTS) \
+        --includedir='$(PREFIX)/$(TARGET)/include/$(PKG)' \
+        --libdir='$(PREFIX)/$(TARGET)/lib/$(PKG)' \
         --enable-install-include
 
-    $(MAKE) -C '$(1)' -j '$(JOBS)'
-    $(MAKE) -C '$(1)' -j 1 install
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 
     '$(TARGET)-gcc' \
-        -std=c99 -W -Wall -Werror -pedantic \
+        -std=c99 -W -Wall -pedantic \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
+        -I'$(PREFIX)/$(TARGET)/include/$(PKG)' \
+        -L'$(PREFIX)/$(TARGET)/lib/$(PKG)' \
         -lhe5_hdfeos -lhdf5_hl -lhdf5 -lz
 endef
 

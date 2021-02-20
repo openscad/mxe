@@ -19,12 +19,16 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
+    # -fcommon for gcc10, remove at next update
+    # https://gcc.gnu.org/gcc-10/porting_to.html
     cd '$(1)' && autoreconf -fi -I'$(PREFIX)/$(TARGET)/share/aclocal'
     cd '$(1)' && ./configure \
         $(MXE_CONFIGURE_OPTS) \
-        --disable-modules \
+        $(if $(BUILD_STATIC), \
+           --disable-modules,) \
         --with-included-loaders \
         --without-gdiplus \
+        CFLAGS='-fcommon' \
         LIBS="`'$(TARGET)-pkg-config' --libs libtiff-4`"
     $(MAKE) -C '$(1)' -j '$(JOBS)' install
 endef

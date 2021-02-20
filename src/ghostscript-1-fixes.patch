@@ -5,14 +5,14 @@ Contains ad hoc patches for cross building.
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: darealshinji <djcj@gmx.de>
 Date: Mon, 3 Dec 2018 21:05:41 +0100
-Subject: [PATCH 1/1] cross-build fixes, hide libgs symbols
+Subject: [PATCH 1/2] cross-build fixes, hide libgs symbols
 
 
 diff --git a/Makefile.in b/Makefile.in
 index 1111111..2222222 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -173,6 +173,9 @@ CAPOPT= @HAVE_MKSTEMP@ @HAVE_FILE64@ @HAVE_FSEEKO@ @HAVE_MKSTEMP64@ @HAVE_FONTCO
+@@ -172,6 +172,9 @@ CAPOPT= @HAVE_MKSTEMP@ @HAVE_FILE64@ @HAVE_FSEEKO@ @HAVE_MKSTEMP64@ @HAVE_FONTCO
  
  GS=@GS@
  GS_SO_BASE=@GS@
@@ -22,7 +22,7 @@ index 1111111..2222222 100644
  
  PCL=@PCL@
  PCL_SO_BASE=@PCL@
-@@ -184,7 +187,7 @@ GPDL=@GPDL@
+@@ -183,7 +186,7 @@ GPDL=@GPDL@
  GPDL_SO_BASE=@GPDL@
  
  XE=@EXEEXT@
@@ -45,7 +45,7 @@ index 1111111..2222222 100644
  #include "pipe_.h"
  #include "string_.h"
  #include "time_.h"
-@@ -454,3 +457,54 @@ void gp_enumerate_fonts_free(void *enum_state)
+@@ -466,3 +469,54 @@ void gp_enumerate_fonts_free(void *enum_state)
      }
  #endif
  }
@@ -57,7 +57,7 @@ index 1111111..2222222 100644
 +
 +#ifdef __MINGW32__
 +int
-+gp_local_arg_encoding_get_codepoint(FILE *file, const char **astr)
++gp_local_arg_encoding_get_codepoint(gp_file *file, const char **astr)
 +{
 +    int len;
 +    int c;
@@ -494,7 +494,7 @@ index 1111111..2222222 100644
  
      JBIG2FILEDEVS='$(DD)gdevjbig2.dev'
      JBIG2DEVS='$(PSD)jbig2.dev'
-@@ -1718,15 +1744,8 @@ if test x$with_luratech != xno; then
+@@ -1734,15 +1760,8 @@ if test x$with_luratech != xno; then
      SHARE_JPX=0
      JPXDIR=$srcdir/luratech/lwf_jp2
  
@@ -512,7 +512,7 @@ index 1111111..2222222 100644
            JPX_AUTOCONF_CFLAGS="-DUSE_LWF_JP2 -DMAC -DMAC_OS_X_BUILD"
          ;;
          AIX)
-@@ -1740,7 +1759,6 @@ if test x$with_luratech != xno; then
+@@ -1756,7 +1775,6 @@ if test x$with_luratech != xno; then
            JPX_AUTOCONF_CFLAGS="-DUSE_LWF_JP2 -DLINUX=1 -DFORTE"
          ;;
        esac
@@ -520,7 +520,7 @@ index 1111111..2222222 100644
      JPXDEVS='$(PSD)jpx.dev'
    else
      AC_MSG_RESULT([no])
-@@ -2357,22 +2375,15 @@ SO_LIB_EXT=".so"
+@@ -2506,22 +2524,15 @@ SO_LIB_EXT=".so"
  DLL_EXT=""
  SO_LIB_VERSION_SEPARATOR="."
  
@@ -552,7 +552,7 @@ index 1111111..2222222 100644
        DYNAMIC_CFLAGS="-fPIC"
        GS_DYNAMIC_LDFLAGS="-shared -Wl,\$(LD_SET_DT_SONAME)\$(LDFLAGS_SO_PREFIX)\$(GS_SONAME_MAJOR)"
        PCL_DYNAMIC_LDFLAGS="-shared -Wl,\$(LD_SET_DT_SONAME)\$(LDFLAGS_SO_PREFIX)\$(PCL_SONAME_MAJOR)"
-@@ -2386,17 +2397,21 @@ else
+@@ -2535,17 +2546,21 @@ else
        fi
        SO_LIB_EXT=".so"
      ;;
@@ -578,7 +578,7 @@ index 1111111..2222222 100644
        DYNAMIC_CFLAGS="-fPIC"
        GS_DYNAMIC_LDFLAGS="-shared -Wl,\$(LD_SET_DT_SONAME)\$(LDFLAGS_SO_PREFIX)\$(GS_SONAME_MAJOR)"
        PCL_DYNAMIC_LDFLAGS="-shared -Wl,\$(LD_SET_DT_SONAME)\$(LDFLAGS_SO_PREFIX)\$(PCL_SONAME_MAJOR)"
-@@ -2404,7 +2419,7 @@ else
+@@ -2553,7 +2568,7 @@ else
        DYNAMIC_LIBS=""
        SO_LIB_EXT=".so"
      ;;
@@ -587,7 +587,7 @@ index 1111111..2222222 100644
        GS_DYNAMIC_LDFLAGS="-dynamiclib -install_name \$(GS_SONAME_MAJOR_MINOR)"
        PCL_DYNAMIC_LDFLAGS="-dynamiclib -install_name \$(PCL_SONAME_MAJOR_MINOR)"
        XPS_DYNAMIC_LDFLAGS="-dynamiclib -install_name \$(XPS_SONAME_MAJOR_MINOR)"
-@@ -2442,15 +2457,18 @@ else
+@@ -2591,15 +2606,18 @@ else
        fi
        SO_LIB_EXT=".so"
        ;;
@@ -610,7 +610,7 @@ index 1111111..2222222 100644
        INSTALL_SHARED="install-shared"
        if test "x$X_DEVS" != x; then
                DYNAMIC_DEVS="\$(GLOBJDIR)/X11.so"
-@@ -2462,14 +2480,14 @@ AC_ARG_ENABLE([dynamic], AC_HELP_STRING([--enable-dynamic],
+@@ -2611,14 +2629,14 @@ AC_ARG_ENABLE([dynamic], AC_HELP_STRING([--enable-dynamic],
        OPT_CFLAGS="$DYNAMIC_CFLAGS $OPT_CFLAGS"
        DBG_CFLAGS="$DYNAMIC_CFLAGS $DBG_CFLAGS"
        ;;
@@ -627,7 +627,7 @@ index 1111111..2222222 100644
        INSTALL_SHARED="install-shared"
        DYNAMIC_FLAGS="-DGS_DEVS_SHARED -DGS_DEVS_SHARED_DIR=\\\"\$(gssharedir)\\\""
        X11_DEVS=""
-@@ -2814,23 +2832,31 @@ AC_SUBST(AUXDIRPOSTFIX)
+@@ -2963,23 +2981,31 @@ AC_SUBST(AUXDIRPOSTFIX)
  # usually empty on Unix-like systems
  # --------------------------------------------------
  EXEEXT=""
@@ -671,7 +671,7 @@ index 1111111..2222222 100644
  
  # --------------------------------------------------
  # Check for disabling of versioned path option.
-@@ -2885,7 +2911,7 @@ fi
+@@ -3034,7 +3060,7 @@ fi
  
  AC_SUBST(CLUSTER_CFLAGS)
  
@@ -680,7 +680,7 @@ index 1111111..2222222 100644
  
    ilog2()
    {
-@@ -3025,7 +3051,7 @@ AC_SUBST(AUXEXTRALIBS)
+@@ -3174,7 +3200,7 @@ AC_SUBST(AUXEXTRALIBS)
  
  CONFIG_FILES_LIST="$CONFIG_FILES_LIST $THEMAKEFILE"
  
@@ -705,3 +705,51 @@ index 1111111..2222222 100644
  # ifndef GSDLLAPI
  #  define GSDLLAPI __stdcall
  # endif
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Chris Liddell <chris.liddell@artifex.com>
+Date: Tue, 20 Oct 2020 08:49:45 +0100
+Subject: [PATCH 2/2] Bug 702985: drop use of FT_CALLBACK_DEF() def
+
+Taken from:
+https://git.ghostscript.com/?p=ghostpdl.git;a=commitdiff;h=41ef9a0bc36b#patch1
+
+From 2.10.3, Freetype disappeared the FT_CALLBACK_DEF() macro, which is what
+we used when defining our callbacks from Freetype.
+
+No guidance forthcoming from the Freetype developer who made those changes,
+so change to explicitly declaring the callbacks file static.
+
+Should fix the reported build failures.
+
+diff --git a/base/fapi_ft.c b/base/fapi_ft.c
+index 1111111..2222222 100644
+--- a/base/fapi_ft.c
++++ b/base/fapi_ft.c
+@@ -125,7 +125,7 @@ static void
+ delete_inc_int_info(gs_fapi_server * a_server,
+                     FT_IncrementalRec * a_inc_int_info);
+ 
+-FT_CALLBACK_DEF(void *)
++static void *
+ FF_alloc(FT_Memory memory, long size)
+ {
+     gs_memory_t *mem = (gs_memory_t *) memory->user;
+@@ -133,7 +133,7 @@ FF_alloc(FT_Memory memory, long size)
+     return (gs_malloc(mem, size, 1, "FF_alloc"));
+ }
+ 
+-FT_CALLBACK_DEF(void *)
++static void *
+     FF_realloc(FT_Memory memory, long cur_size, long new_size, void *block)
+ {
+     gs_memory_t *mem = (gs_memory_t *) memory->user;
+@@ -153,7 +153,7 @@ FT_CALLBACK_DEF(void *)
+     return (tmp);
+ }
+ 
+-FT_CALLBACK_DEF(void)
++static void
+     FF_free(FT_Memory memory, void *block)
+ {
+     gs_memory_t *mem = (gs_memory_t *) memory->user;

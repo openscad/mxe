@@ -3,18 +3,19 @@
 PKG             := gst-libav
 $(PKG)_WEBSITE  := https://gstreamer.freedesktop.org/modules/gst-libav.html
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.16.0
-$(PKG)_CHECKSUM := dfac119043a9cfdcacd7acde77f674ab172cf2537b5812be52f49e9cddc53d9a
+$(PKG)_VERSION  := 1.16.3
+$(PKG)_CHECKSUM := d10c5eb1a00a91de97c85c0956c663aa6e99d268195cdec4534c179b831538ec
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://gstreamer.freedesktop.org/src/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc gst-plugins-base gstreamer $(BUILD)~nasm
+$(PKG)_DEPS     := cc ffmpeg gst-plugins-base gstreamer $(BUILD)~nasm
 
 $(PKG)_UPDATE = $(subst gstreamer/refs,gst-libav/refs,$(gstreamer_UPDATE))
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
-        $(MXE_CONFIGURE_OPTS)
+        $(MXE_CONFIGURE_OPTS) \
+        --with-system-libav
     $(MAKE) -C '$(BUILD_DIR)' -j $(JOBS) LIBS=-lbcrypt
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 

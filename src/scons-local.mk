@@ -3,9 +3,10 @@
 PKG             := scons-local
 $(PKG)_WEBSITE  := https://scons.org/
 $(PKG)_DESCR    := Standalone SCons
-$(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.0.1
-$(PKG)_CHECKSUM := 4d6ceb7b5a628c0ffd9e7b5b0d176a4949cd70dd70ddd0cc0d18e19d71258695
+# scons 4x requires python3.5+ while 3x supports both 2.7+/3.5+
+$(PKG)_IGNORE   := 4%
+$(PKG)_VERSION  := 3.1.2
+$(PKG)_CHECKSUM := 642e90860b746fa18fac08c7a22de6bfa86110ae7c56d7f136f7e5fb0d8f4f44
 $(PKG)_SUBDIR   := .
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/scons/$(PKG)/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -17,3 +18,12 @@ define $(PKG)_UPDATE
 endef
 
 # unpack sources into build dir and execute directly with python2
+# scons does various PATH manipulations that don't play well with ccache
+SCONS_LOCAL = \
+    PATH='$(PREFIX)/bin:$(PATH)' $(BUILD)-python$(PY_XY_VER) '$(BUILD_DIR).scons/scons.py'
+SCONS_PREP = \
+    mkdir -p '$(BUILD_DIR).scons' && \
+    $(call PREPARE_PKG_SOURCE,scons-local,'$(BUILD_DIR).scons')
+PKG_SCONS_OPTS = \
+    $(_$(PKG)_SCONS_OPTS) \
+    $($(PKG)_SCONS_OPTS)

@@ -4,13 +4,18 @@ PKG             := zstd
 $(PKG)_WEBSITE  := https://github.com/facebook/zstd
 $(PKG)_DESCR    := Zstandard is a fast lossless compression algorithm
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.4.1
-$(PKG)_CHECKSUM := f91ea3397e6cc65d398e1bc0713cf2f0b0de2fb85ea9dabb1eb3e8f1b22f8d6f
+$(PKG)_VERSION  := 1.4.8
+$(PKG)_CHECKSUM := f176f0626cb797022fbf257c3c644d71c1c747bb74c32201f9203654da35e9fa
 $(PKG)_GH_CONF  := facebook/zstd/tags,v
+$(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 $(PKG)_DEPS     := cc
+
+$(PKG)_DEPS_$(BUILD) :=
+$(PKG)_OO_DEPS_$(BUILD) := $(MXE_CONF_PKGS)
 
 define $(PKG)_BUILD
     # build and install the library
+    # use cmake to ensure shared builds "do the right thing"
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)/build/cmake' \
         -DZSTD_BUILD_STATIC=$(CMAKE_STATIC_BOOL) \
         -DZSTD_BUILD_SHARED=$(CMAKE_SHARED_BOOL) \
@@ -23,4 +28,20 @@ define $(PKG)_BUILD
         -W -Wall -Werror -ansi -pedantic \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
         `'$(TARGET)-pkg-config' lib$(PKG) --cflags --libs`
+endef
+
+define $(PKG)_BUILD_$(BUILD)
+    # build and install the library and programs
+    # use make to avoid cmake dependency for gcc10+
+    $(MAKE) -C '$(SOURCE_DIR)/lib' -j '$(JOBS)' V=1 libzstd.a
+    $(MAKE) -C '$(SOURCE_DIR)/lib' -j 1 V=1 \
+        prefix='$(PREFIX)/$(TARGET)' \
+        install-pc \
+        install-static \
+        install-includes
+    $(MAKE) -C '$(SOURCE_DIR)/programs' -j '$(JOBS)' V=1 zstd-release
+    $(MAKE) -C '$(SOURCE_DIR)/programs' -j 1 V=1 \
+        prefix='$(PREFIX)/$(TARGET)' \
+        mandir='$(BUILD_DIR)' \
+        install
 endef
