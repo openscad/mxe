@@ -4,8 +4,8 @@
 PKG             := double-conversion
 $(PKG)_WEBSITE  := https://github.com/google/double-conversion/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.1.1
-$(PKG)_CHECKSUM := c49a6b3fa9c917f827b156c8e0799ece88ae50440487a99fc2f284cfd357a5b9
+$(PKG)_VERSION  := 3.1.5
+$(PKG)_CHECKSUM := a63ecb93182134ba4293fd5f22d6e08ca417caafa244afaa751cbfddf6415b13
 $(PKG)_GH_CONF  := google/double-conversion/tags, v
 $(PKG)_DEPS     :=
 
