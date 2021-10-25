@@ -3,8 +3,8 @@
 PKG             := cgal
 $(PKG)_WEBSITE  := https://www.cgal.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 5.2
-$(PKG)_CHECKSUM := 4daa32c14b78391725836d0975906c2d265885c4a6d83d6e1662ff90bf321dcb
+$(PKG)_VERSION  := 5.3
+$(PKG)_CHECKSUM := 1c9c32814eb9b0abfd368c8145194b49d7c6ade76eec613b1eac6ebb93470bdb
 # using / in tag name means we have to set SUBDIR, FILE, URL
 $(PKG)_GH_CONF  := CGAL/cgal/tags, v
 $(PKG)_SUBDIR   := CGAL-$($(PKG)_VERSION)
@@ -27,7 +27,7 @@ define $(PKG)_BUILD
 
     # compile test
     '$(TARGET)-g++' \
-        -W -Wall -Werror \
+        -std=c++14 -W -Wall -Werror \
         '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-$(PKG).exe' \
         '-I$(PREFIX)/$(TARGET)/include' \
         '-L$(PREFIX)/$(TARGET)/lib' \
