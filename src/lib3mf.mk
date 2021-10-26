@@ -3,11 +3,11 @@
 
 PKG             := lib3mf
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := git
-$(PKG)_CHECKSUM := 85c4992137837ef77ee0d0bfe2e2f1653f36dc1358e313b4c91313dde237d770
+$(PKG)_VERSION  := 1.8.1
+$(PKG)_CHECKSUM := 207dd142c9ca86a4fb1a4b2baadbdf579f35e03f9b8bf5c02dae027da5ae9d17
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://github.com/t-paul/lib3mf/archive/openscad-build/lib3mf-openscad-build.tar.gz
-$(PKG)_SUBDIR   := lib3mf-openscad-build
+$(PKG)_URL      := https://github.com/3MFConsortium/lib3mf/archive/refs/tags/v$($(PKG)_VERSION).tar.gz
+$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_DEPS     := gcc
 
 define $(PKG)_BUILD
