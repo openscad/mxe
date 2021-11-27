@@ -1,29 +1,17 @@
-This file is part of MXE. See LICENSE.md for licensing information.
-
-Contains ad hoc patches for cross building.
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Tony Theodore <tonyt@logyst.com>
-Date: Mon, 20 Nov 2017 10:25:44 +1100
-Subject: [PATCH 1/1] fix boost linking errors
-
-
-diff --git a/src/CGAL/CMakeLists.txt b/src/CGAL/CMakeLists.txt
-index 1111111..2222222 100644
---- a/src/CGAL/CMakeLists.txt
-+++ b/src/CGAL/CMakeLists.txt
-@@ -2,6 +2,14 @@ message("Configuring libCGAL")
+Common subdirectories: CGAL-5.3.orig/auxiliary and CGAL-5.3/auxiliary
+Common subdirectories: CGAL-5.3.orig/cmake and CGAL-5.3/cmake
+diff -u CGAL-5.3.orig/CMakeLists.txt CGAL-5.3/CMakeLists.txt
+--- CGAL-5.3.orig/CMakeLists.txt	2021-06-20 21:00:10.000000000 +0200
++++ CGAL-5.3/CMakeLists.txt	2021-07-24 19:27:55.091506592 +0200
+@@ -660,9 +660,6 @@
+ cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
  
- use_essential_libs()
+ install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
+-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
+-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
+-
  
-+# same as src/CGAL_Core/CMakeLists.txt
-+if (NOT MSVC)
-+  # See the release notes of CGAL-4.10: CGAL_Core now requires
-+  # Boost.Thread, with all compilers but MSVC.
-+  find_package( Boost 1.48 REQUIRED thread system )
-+  cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
-+endif(NOT MSVC)
-+
- include_directories (SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
- 
- add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
+ #
+ # Variables used when WITH_{demos|examples|tests} are TRUE
+Common subdirectories: CGAL-5.3.orig/include and CGAL-5.3/include
+Common subdirectories: CGAL-5.3.orig/lib and CGAL-5.3/lib
