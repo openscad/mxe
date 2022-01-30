@@ -7,7 +7,7 @@ $(PKG)_IGNORE   :=
 $(PKG)_VERSION  := 3.1.5
 $(PKG)_CHECKSUM := a63ecb93182134ba4293fd5f22d6e08ca417caafa244afaa751cbfddf6415b13
 $(PKG)_GH_CONF  := google/double-conversion/tags, v
-$(PKG)_DEPS     :=
+$(PKG)_DEPS     := cc
 
 define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
