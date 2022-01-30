@@ -32,7 +32,7 @@ define $(PKG)_BUILD
 endef
 
 define $(PKG)_BUILD_SHARED
-    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' CONFIG+=dll src.pro
+    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/$($(PKG)_QT_DIR)/bin/qmake' CONFIG+=dll src.pro
 
     # make the names match MXE/cygwin standard convention, overriding qmake
     $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Release' 
@@ -48,7 +48,7 @@ define $(PKG)_BUILD_SHARED
     $(INSTALL) -m644 '$(1)/lib/libopencsg-1.dll' '$(PREFIX)/$(TARGET)/bin/'
     $(INSTALL) -m644 '$(1)/lib/libopencsg.dll.a' '$(PREFIX)/$(TARGET)/lib/'
 
-    cd '$(1)/example' && '$(PREFIX)/$(TARGET)/qt/bin/qmake' example.pro
+    cd '$(1)/example' && '$(PREFIX)/$(TARGET)/$($(PKG)_QT_DIR)/bin/qmake' example.pro
     $(MAKE) -C '$(1)/example' -j '$(JOBS)'
     $(INSTALL) -m755 '$(1)/example/release/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
 endef
