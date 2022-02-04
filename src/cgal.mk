@@ -3,8 +3,8 @@
 PKG             := cgal
 $(PKG)_WEBSITE  := https://www.cgal.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 5.2
-$(PKG)_CHECKSUM := 4daa32c14b78391725836d0975906c2d265885c4a6d83d6e1662ff90bf321dcb
+$(PKG)_VERSION  := 5.2.4
+$(PKG)_CHECKSUM := 0b6adb1aee779a5045348c08f022d2b72c74020c6ba11901b61c00d1c120c83d
 # using / in tag name means we have to set SUBDIR, FILE, URL
 $(PKG)_GH_CONF  := CGAL/cgal/tags, v
 $(PKG)_SUBDIR   := CGAL-$($(PKG)_VERSION)
