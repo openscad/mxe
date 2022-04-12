@@ -1,0 +1,11 @@
+--- OpenCSG-1.5.0.orig/example/main.cpp	2022-04-10 17:04:35.000000000 +0200
++++ OpenCSG-1.5.0/example/main.cpp	2022-04-13 00:16:22.002762125 +0200
+@@ -38,7 +38,7 @@
+ // directly put into the opencsg main directory (e.g., try to use the
+ // freeglut 3.0.0 MSVC Package that is available from
+ // https://www.transmissionzero.co.uk/software/freeglut-devel)
+-#include <../freeglut/include/GL/glut.h>
++#include <GL/glut.h>
+ #else
+ #include <GL/glut.h>
+ #endif
