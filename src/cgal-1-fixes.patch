@@ -1,29 +1,62 @@
-This file is part of MXE. See LICENSE.md for licensing information.
-
-Contains ad hoc patches for cross building.
-
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Tony Theodore <tonyt@logyst.com>
-Date: Mon, 20 Nov 2017 10:25:44 +1100
-Subject: [PATCH 1/1] fix boost linking errors
-
-
-diff --git a/src/CGAL/CMakeLists.txt b/src/CGAL/CMakeLists.txt
-index 1111111..2222222 100644
---- a/src/CGAL/CMakeLists.txt
-+++ b/src/CGAL/CMakeLists.txt
-@@ -2,6 +2,14 @@ message("Configuring libCGAL")
+diff -ru CGAL-5.4.orig/include/CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h CGAL-5.4/include/CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h
+--- CGAL-5.4.orig/include/CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h	2022-01-27 21:05:24.000000000 +0100
++++ CGAL-5.4/include/CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h	2022-02-08 17:43:49.984776516 +0100
+@@ -1244,7 +1244,7 @@
+   const Squared_distance_3 squared_distance_3 =
+     traits.compute_squared_distance_3_object();
  
- use_essential_libs()
+-  const std::size_t n = points.size() - 1; // the first equals to the last
++  const double n(points.size() - 1); // the first equals to the last
+   if (n < 3) {
+     return false; // cant be a plane!
+   }
+@@ -1256,8 +1256,8 @@
+   // Compute covariance matrix.
+   FT xx = FT(0), yy = FT(0), zz = FT(0);
+   FT xy = FT(0), xz = FT(0), yz = FT(0);
+-  for (std::size_t i = 0; i < n; ++i) {
+-    const Point_3& p = points[i];
++  for (const Point_3& p : points)
++  {
+     const FT dx = p.x() - centroid.x();
+     const FT dy = p.y() - centroid.y();
+     const FT dz = p.z() - centroid.z();
+@@ -1281,12 +1281,12 @@
+   CGAL_assertion(avg_normal != typename Traits::Vector_3());
+   const Plane_3 plane = Plane_3(centroid, avg_normal);
+   FT avg_squared_distance = FT(0);
+-  for (std::size_t i = 0; i < n; ++i) {
+-    const Point_3& p = points[i];
++  for (const Point_3& p : points)
++  {
+     const Point_3  q = projection_3(plane, p);
+     avg_squared_distance += CGAL::abs(squared_distance_3(p, q));
+   }
+-  avg_squared_distance /= static_cast<FT>(n);
++  avg_squared_distance /= FT(n);
+   // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
  
-+# same as src/CGAL_Core/CMakeLists.txt
-+if (NOT MSVC)
-+  # See the release notes of CGAL-4.10: CGAL_Core now requires
-+  # Boost.Thread, with all compilers but MSVC.
-+  find_package( Boost 1.48 REQUIRED thread system )
-+  cache_set(CGAL_3RD_PARTY_LIBRARIES    ${CGAL_3RD_PARTY_LIBRARIES} ${Boost_LIBRARIES} )
-+endif(NOT MSVC)
-+
- include_directories (SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
+   CGAL_assertion(max_squared_distance >= FT(0));
+@@ -1327,7 +1327,7 @@
+   }
  
- add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
+   FT x = FT(0), y = FT(0), z = FT(0);
+-  std::size_t num_normals = 0;
++  int num_normals = 0;
+   const Point_3& ref_point = P[0];
+   const std::size_t size = P.size() - 1;
+   for (std::size_t i = 1; i < size - 1; ++i) {
+@@ -1362,9 +1362,10 @@
+   }
+ 
+   // Setting the final normal.
+-  x /= static_cast<FT>(num_normals);
+-  y /= static_cast<FT>(num_normals);
+-  z /= static_cast<FT>(num_normals);
++  FT ft_nn(num_normals);
++  x /= ft_nn;
++  y /= ft_nn;
++  z /= ft_nn;
+   const Vector_3 avg_normal = Vector_3(x, y, z);
+   // std::cout << "avg normal: " << avg_normal << std::endl;
+ 
