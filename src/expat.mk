@@ -4,8 +4,8 @@ PKG             := expat
 $(PKG)_WEBSITE  := https://github.com/libexpat/libexpat
 $(PKG)_DESCR    := Expat XML Parser
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.4.1
-$(PKG)_CHECKSUM := 2f9b6a580b94577b150a7d5617ad4643a4301a6616ff459307df3e225bcfbf40
+$(PKG)_VERSION  := 2.5.0
+$(PKG)_CHECKSUM := 6f0e6e01f7b30025fa05c85fdad1e5d0ec7fd35d9f61b22f34998de11969ff67
 $(PKG)_SUBDIR   := expat-$($(PKG)_VERSION)
 $(PKG)_FILE     := expat-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/expat/expat/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -24,4 +24,9 @@ define $(PKG)_BUILD
         --without-docbook
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
+
+    # Remove cmake folder since we're not using cmake here and it's
+    # prebuilt misconfigured for MXE
+    $(RM) -r '$(PREFIX)/$(TARGET)/lib/cmake/expat-$($(PKG)_VERSION)'
+
 endef

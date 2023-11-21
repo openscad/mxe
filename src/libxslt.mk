@@ -1,13 +1,13 @@
 # This file is part of MXE. See LICENSE.md for licensing information.
 
 PKG             := libxslt
-$(PKG)_WEBSITE  := http://xmlsoft.org/XSLT/
+$(PKG)_WEBSITE  := https://gitlab.gnome.org/GNOME/libxslt/-/wikis
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.1.34
-$(PKG)_CHECKSUM := 98b1bd46d6792925ad2dfe9a87452ea2adebf69dcb9919ffd55bf926a7f93f7f
+$(PKG)_VERSION  := 1.1.37
+$(PKG)_CHECKSUM := 3a4b27dc8027ccd6146725950336f1ec520928f320f144eb5fa7990ae6123ab4
 $(PKG)_SUBDIR   := libxslt-$($(PKG)_VERSION)
-$(PKG)_FILE     := libxslt-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := http://xmlsoft.org/sources/$($(PKG)_FILE)
+$(PKG)_FILE     := libxslt-$($(PKG)_VERSION).tar.xz
+$(PKG)_URL      := https://download.gnome.org/sources/libxslt/1.1/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc libgcrypt libxml2
 
 define $(PKG)_UPDATE
@@ -17,11 +17,12 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    cd '$(1)' && ./configure \
+    cd '$(BUILD_DIR)' && $(SOURCE_DIR)/configure \
         $(MXE_CONFIGURE_OPTS) \
         --without-debug \
         --with-libxml-prefix='$(PREFIX)/$(TARGET)' \
         --without-python \
         --without-plugins
-    $(MAKE) -C '$(1)' -j '$(JOBS)' install bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' $(MXE_DISABLE_PROGRAMS)
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install $(MXE_DISABLE_PROGRAMS)
 endef

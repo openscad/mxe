@@ -4,16 +4,16 @@ PKG             := gsoap
 $(PKG)_WEBSITE  := https://www.genivia.com/dev.html
 $(PKG)_DESCR    := gSOAP
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.8.111
-$(PKG)_CHECKSUM := f1670c7e3aeaa66bc5658539fbd162e5099f022666855ef2b2c2bac07fec4bd3
+$(PKG)_VERSION  := 2.8.130
+$(PKG)_CHECKSUM := 5cece2b1829f3a94c1448d8e763e54dcb16f055710044e6f450d2004f2e5a3df
 $(PKG)_SUBDIR   := gsoap-$(call SHORT_PKG_VERSION,$(PKG))
 $(PKG)_FILE     := gsoap_$($(PKG)_VERSION).zip
-$(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/gsoap2/gsoap-$(call SHORT_PKG_VERSION,$(PKG))/$($(PKG)_FILE)
+$(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/gsoap2/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc libgcrypt libntlm openssl
 
 define $(PKG)_UPDATE
-    $(WGET) -q -O- 'https://sourceforge.net/projects/gsoap2/files/gsoap-2.8/' | \
-    $(SED) -n 's,.*gsoap_\([0-9][^>]*\)\.zip.*,\1,p' | \
+    $(WGET) -q -O- 'https://sourceforge.net/projects/gsoap2/' | \
+    $(SED) -n 's,.*gsoap_\([0-9.]\+\)\.zip.*,\1,p' | \
     head -1
 endef
 
@@ -52,7 +52,7 @@ define $(PKG)_BUILD
         --prefix='$(PREFIX)/$(TARGET)' \
         --host='$(TARGET)' \
         --build="`config.guess`" \
-        CPPFLAGS='-DWITH_NTLM -D_WIN32_WINNT=0x0601 -DWINVER=0x0601'
+        CPPFLAGS='-DWITH_NTLM'
 
     # Building for mingw requires native soapcpp2
     ln -sf '$(PREFIX)/bin/$(TARGET)-soapcpp2' '$(1)/gsoap/src/soapcpp2'

@@ -4,8 +4,8 @@ PKG             := libgpg_error
 $(PKG)_WEBSITE  := https://www.gnupg.org/related_software/libgpg-error/
 $(PKG)_DESCR    := libgpg-error
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.42
-$(PKG)_CHECKSUM := fc07e70f6c615f8c4f590a8e37a9b8dd2e2ca1e9408f8e60459c67452b925e23
+$(PKG)_VERSION  := 1.47
+$(PKG)_CHECKSUM := 9e3c670966b96ecc746c28c2c419541e3bcb787d1a73930f5e5f5e1bcbbb9bdb
 $(PKG)_SUBDIR   := libgpg-error-$($(PKG)_VERSION)
 $(PKG)_FILE     := libgpg-error-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := https://gnupg.org/ftp/gcrypt/libgpg-error/$($(PKG)_FILE)
@@ -24,7 +24,8 @@ define $(PKG)_BUILD
     cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
         $(MXE_CONFIGURE_OPTS) \
         --disable-nls \
-        --disable-languages
+        --disable-languages \
+        --enable-install-gpg-error-config
     $(SED) -i 's/host_os = mingw32.*/host_os = mingw32/' '$(BUILD_DIR)/src/Makefile'
     $(MAKE) -C '$(BUILD_DIR)/src' -j '$(JOBS)' bin_PROGRAMS= sbin_PROGRAMS= noinst_PROGRAMS=
     $(SED) -i 's/-lgpg-error/-lgpg-error -lintl -liconv -lws2_32/;' '$(BUILD_DIR)/src/gpg-error-config'

@@ -40,9 +40,11 @@ LIBTOOLIZE := $(shell glibtoolize --help >/dev/null 2>&1 && echo g)libtoolize
 OPENSSL    := openssl
 PATCH      := $(shell gpatch --help >/dev/null 2>&1 && echo g)patch
 PYTHON     := $(shell PATH="$(ORIG_PATH)" which python)
+PYTHON3    := $(shell PATH="$(ORIG_PATH)" which python3)
 PY_XY_VER  := $(shell $(PYTHON) -c "import sys; print('{0[0]}.{0[1]}'.format(sys.version_info))")
 SED        := $(shell gsed --help >/dev/null 2>&1 && echo g)sed
 SORT       := $(shell gsort --help >/dev/null 2>&1 && echo g)sort
+TOUCH      := $(shell gtouch --help >/dev/null 2>&1 && echo g)touch
 DEFAULT_UA := $(shell wget --version | $(SED) -n 's,GNU \(Wget\) \([0-9.]*\).*,\1/\2,p')
 WGET_TOOL   = wget
 WGET        = $(WGET_TOOL) --user-agent='$(or $($(1)_UA),$(DEFAULT_UA))' -t 2 --timeout=6
@@ -65,10 +67,12 @@ REQUIREMENTS := \
     $(LIBTOOLIZE) \
     lzip \
     $(MAKE) \
+    mako-render \
     $(OPENSSL) \
     $(PATCH) \
     perl \
     $(PYTHON) \
+    $(PYTHON3) \
     ruby \
     $(SED) \
     $(SORT) \
@@ -76,7 +80,8 @@ REQUIREMENTS := \
     wget \
     xz
 
-PREFIX     := $(PWD)/usr
+MXE_PREFIX := $(PWD)/usr
+PREFIX     := $(MXE_PREFIX)
 LOG_DIR    := $(PWD)/log
 GITS_DIR   := $(PWD)/gits
 GIT_HEAD   := $(shell git rev-parse HEAD)
@@ -95,6 +100,11 @@ STRIP_EXE       := $(true)
 MXE_USE_CCACHE      := mxe
 MXE_CCACHE_DIR      := $(PWD)/.ccache
 MXE_CCACHE_BASE_DIR := $(PWD)
+MXE_CCACHE_CACHE_DIR := $(MXE_CCACHE_DIR)/ccache
+
+# set to major.minor for LTS
+# MXE_QT6_ID := qt6.2
+MXE_QT6_ID := qt6
 
 # define some whitespace variables
 define newline
@@ -128,13 +138,30 @@ MXE_CONFIGURE_OPTS = \
         --disable-static --enable-shared ) \
     $(MXE_DISABLE_DOC_OPTS)
 
+MXE_MESON_WRAPPER = '$(PREFIX)/bin/$(TARGET)-meson'
+MXE_MESON_NATIVE_WRAPPER = '$(PREFIX)/bin/mxe-native-meson'
+MXE_NINJA = '$(PREFIX)/$(BUILD)/bin/ninja'
+
+# Please edit meson wrapper and/or target file instead of this,
+# unless your changes only apply to building MXE's packages
+MXE_MESON_OPTS = \
+    --buildtype=release \
+    --wrap-mode=nofallback \
+    $(if $(findstring mxe,$(MXE_USE_CCACHE)), \
+    --cross-file='$(PREFIX)/$(TARGET)/share/meson/mxe-crossfile-internal.meson')
+
+PKG_MESON_OPTS = \
+    $(_$(PKG)_MESON_OPTS) \
+    $($(PKG)_MESON_OPTS)
+
 PKG_CONFIGURE_OPTS = \
     $(_$(PKG)_CONFIGURE_OPTS) \
     $($(PKG)_CONFIGURE_OPTS)
 
 PKG_CMAKE_OPTS = \
     $(_$(PKG)_CMAKE_OPTS) \
-    $($(PKG)_CMAKE_OPTS)
+    $($(PKG)_CMAKE_OPTS) \
+    $($(PKG)_$(TARGET)_CMAKE_OPTS)
 
 # GCC threads and exceptions
 MXE_GCC_THREADS = \
@@ -322,7 +349,8 @@ ESCAPE_PKG = \
 BACKUP_DOWNLOAD = \
     (echo "MXE Warning! Downloading $(1) from backup." >&2 && \
     ($(foreach SITE,$(MIRROR_SITES), \
-        $(WGET) -O '$(TMP_FILE)' $($(SITE))/`$(call ESCAPE_PKG,$(1))`_$($(1)_CHECKSUM) || ) false))
+        $(WGET) -O '$(TMP_FILE)' $($(SITE))/`$(call ESCAPE_PKG,$(1))`_$($(1)_CHECKSUM) || \
+        $(WGET) -O '$(TMP_FILE)' $($(SITE))/`$(call ESCAPE_PKG,$(1))` || ) false))
 
 DOWNLOAD_PKG_ARCHIVE = \
     $(eval TMP_FILE := $(PKG_DIR)/.tmp-$($(1)_FILE)) \
@@ -414,7 +442,10 @@ NPROCS := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
 JOBS   ?= $(call LIST_NMIN, $(DEFAULT_MAX_JOBS) $(NPROCS))
 
 # Core packages.
-override MXE_PLUGIN_DIRS := $(realpath $(TOP_DIR)/src) $(MXE_PLUGIN_DIRS)
+override MXE_PLUGIN_DIRS := \
+    $(realpath $(TOP_DIR)/src) \
+    $(realpath $(TOP_DIR)/src/qt/$(MXE_QT6_ID)) \
+    $(MXE_PLUGIN_DIRS)
 
 # Build native requirements for certain systems
 OS_SHORT_NAME   := $(call lc,$(shell lsb_release -sc 2>/dev/null || uname -s))
@@ -465,7 +496,7 @@ $(PREFIX)/installed/print-git-oneline-$(GIT_HEAD): | $(PREFIX)/installed/.gitkee
 
 # Common dependency lists for `make` prerequisites and `build-pkg`
 #   - `make` considers only explicit normal deps to trigger rebuilds
-#   - packages can add themselves to implicit MXE_REQS_PKGS in the case
+#   - packages can add themselves to implicit BOOTSTRAP_PKGS in the case
 #       of a tool like `patch` which may be outdated on some systems
 #   - downloads and `build-pkg` use both explicit and implicit deps
 #   - don't depend on `disabled` rules but do depend on virtual pkgs
@@ -474,11 +505,9 @@ $(PREFIX)/installed/print-git-oneline-$(GIT_HEAD): | $(PREFIX)/installed/.gitkee
 # in `cleanup-deps-style` rule below
 CROSS_COMPILER := cc
 
-# set reqs and bootstrap variables to recursive so pkgs can add themselves
-# CROSS_COMPILER depends (order-only) on MXE_REQS_PKGS
-# all depend (order-only) on BOOTSTRAP_PKGS
+# set bootstrap variable to recursive so pkgs can add themselves
+# all pkgs depend (order-only) on BOOTSTRAP_PKGS
 # BOOTSTRAP_PKGS may be prefixed with $(BUILD)~
-MXE_REQS_PKGS  =
 BOOTSTRAP_PKGS =
 
 # warning about switching from `gcc` to `cc`
@@ -713,7 +742,7 @@ else
     NONET_LIB := $(PREFIX)/$(BUILD)/lib/nonetwork.dylib
     PRELOAD   := DYLD_FORCE_FLAT_NAMESPACE=1 DYLD_INSERT_LIBRARIES='$(NONET_LIB)' \
                  http_proxy=$(DUMMY_PROXY) https_proxy=$(DUMMY_PROXY)
-    NONET_CFLAGS := -arch x86_64
+    NONET_CFLAGS := -arch $(shell uname -m)
 endif
 
 $(NONET_LIB): $(TOP_DIR)/tools/nonetwork.c | $(PREFIX)/$(BUILD)/lib/.gitkeep

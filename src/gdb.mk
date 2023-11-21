@@ -2,13 +2,13 @@
 
 PKG             := gdb
 $(PKG)_WEBSITE  := https://www.gnu.org/software/gdb/
-$(PKG)_VERSION  := 11.1
-$(PKG)_CHECKSUM := cccfcc407b20d343fb320d4a9a2110776dd3165118ffd41f4b1b162340333f94
+$(PKG)_VERSION  := 13.2
+$(PKG)_CHECKSUM := fd5bebb7be1833abdb6e023c2f498a354498281df9d05523d8915babeb893f0a
 $(PKG)_SUBDIR   := gdb-$($(PKG)_VERSION)
 $(PKG)_FILE     := gdb-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://ftp.gnu.org/gnu/$(PKG)/$($(PKG)_FILE)
 $(PKG)_URL_2    := https://ftpmirror.gnu.org/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc dlfcn-win32 expat libiconv mman-win32 readline zlib
+$(PKG)_DEPS     := cc dlfcn-win32 expat gmp libiconv mman-win32 readline zlib
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://ftp.gnu.org/gnu/gdb/?C=M;O=D' | \
@@ -22,6 +22,7 @@ define $(PKG)_BUILD
         $(MXE_CONFIGURE_OPTS) \
         --enable-static \
         --disable-shared \
+        --disable-source-highlight \
         --with-system-readline \
         --disable-gdbtk \
         --disable-tui \
