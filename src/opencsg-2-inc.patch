@@ -1,0 +1,11 @@
+diff -ur OpenCSG-1.5.0.orig/src/batch.h OpenCSG-1.5.0/src/batch.h
+--- OpenCSG-1.5.0.orig/src/batch.h	2022-04-10 17:04:35.000000000 +0200
++++ OpenCSG-1.5.0/src/batch.h	2022-04-13 00:09:56.090663731 +0200
+@@ -28,6 +28,7 @@
+ 
+ #include "opencsgConfig.h"
+ #include <vector>
++#include <cstddef>
+ 
+ namespace OpenCSG {
+ 
