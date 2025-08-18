@@ -3,8 +3,8 @@
 PKG             := cgal
 $(PKG)_WEBSITE  := https://www.cgal.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 5.5
-$(PKG)_CHECKSUM := 40aec3401a8ed57ae6fd5185dfbb6c360b3aa653860407a9add074cf8e007108
+$(PKG)_VERSION  := 6.1
+$(PKG)_CHECKSUM := ef4861f1a55417d1e884306c9408ff64fdf39362a38443f17885c55f7f19278a
 $(PKG)_GH_CONF  := CGAL/cgal/releases, v
 $(PKG)_SUBDIR   := CGAL-$($(PKG)_VERSION)
 $(PKG)_FILE     := CGAL-$($(PKG)_VERSION)-library.tar.xz
