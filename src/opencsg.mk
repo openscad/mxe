@@ -8,9 +8,9 @@ $(PKG)_CHECKSUM := bf2573acf3f8ee634aee074db2406e125a77b262b73ef2a65eff286640511
 $(PKG)_SUBDIR   := OpenCSG-$($(PKG)_VERSION)
 $(PKG)_FILE     := OpenCSG-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := http://www.opencsg.org/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc freeglut glew qtbase
+$(PKG)_DEPS     := cc freeglut glew qt6-qtbase
 
-$(PKG)_QT_DIR   := qt5
+$(PKG)_QT_DIR   := qt6
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'http://www.opencsg.org/#download' | \
