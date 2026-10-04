@@ -3,8 +3,8 @@
 PKG             := opencsg
 $(PKG)_WEBSITE  := http://www.opencsg.org/
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.5.0
-$(PKG)_CHECKSUM := bf2573acf3f8ee634aee074db2406e125a77b262b73ef2a65eff28664051174a
+$(PKG)_VERSION  := 1.8.2
+$(PKG)_CHECKSUM := 5ac5df73b1ad3340dd6705ff90e009f1a946bb9536c21c2263a6f974265664c0
 $(PKG)_SUBDIR   := OpenCSG-$($(PKG)_VERSION)
 $(PKG)_FILE     := OpenCSG-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := http://www.opencsg.org/$($(PKG)_FILE)
@@ -20,35 +20,7 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    # doesn't support out-of-source build
-    cd '$(SOURCE_DIR)/src' && '$(PREFIX)/$(TARGET)/$($(PKG)_QT_DIR)/bin/qmake' src.pro
-    $(MAKE) -C '$(SOURCE_DIR)/src' -j '$(JOBS)'
-    $(INSTALL) -m644 '$(SOURCE_DIR)/include/opencsg.h' '$(PREFIX)/$(TARGET)/include/'
-    $(INSTALL) -m644 '$(SOURCE_DIR)/lib/libopencsg.a' '$(PREFIX)/$(TARGET)/lib/'
-
-    cd '$(SOURCE_DIR)/example' && '$(PREFIX)/$(TARGET)/$($(PKG)_QT_DIR)/bin/qmake' example.pro
-    $(MAKE) -C '$(SOURCE_DIR)/example' -j '$(JOBS)'
-    $(INSTALL) -m755 '$(SOURCE_DIR)/example/$(BUILD_TYPE)/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
-endef
-
-define $(PKG)_BUILD_SHARED
-    cd '$(1)/src' && '$(PREFIX)/$(TARGET)/$($(PKG)_QT_DIR)/bin/qmake' INSTALLDIR='$(PREFIX)/$(TARGET)/' LIBS+=-lgdi32 PKGCONFIG+=gl CONFIG+=dll src.pro
-
-    # make the names match MXE/cygwin standard convention, overriding qmake
-    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Release'
-    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile.Release'
-    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile'
-    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile'
-    $(SED) -i 's,opencsg1.dll,libopencsg-1.dll,' '$(1)/src/Makefile.Debug'
-    $(SED) -i 's,libopencsg1.a,libopencsg.dll.a,' '$(1)/src/Makefile.Debug'
-
-    $(MAKE) -C '$(1)/src' -j '$(JOBS)'
-
-    $(INSTALL) -m644 '$(1)/include/opencsg.h' '$(PREFIX)/$(TARGET)/include/'
-    $(INSTALL) -m644 '$(1)/lib/libopencsg-1.dll' '$(PREFIX)/$(TARGET)/bin/'
-    $(INSTALL) -m644 '$(1)/lib/libopencsg.dll.a' '$(PREFIX)/$(TARGET)/lib/'
-
-    cd '$(1)/example' && '$(PREFIX)/$(TARGET)/$($(PKG)_QT_DIR)/bin/qmake' INSTALLDIR='${PREFIX}/${TARGET}/' LIBS+=-lgdi32 PKGCONFIG+=gl example.pro
-    $(MAKE) -C '$(1)/example' -j '$(JOBS)'
-    $(INSTALL) -m755 '$(1)/example/release/opencsgexample.exe' '$(PREFIX)/$(TARGET)/bin/test-opencsg.exe'
+    # BUILD_EXAMPLE uses hardcoded ../freeglut/include/GL/glut.h path
+    cd '$(BUILD_DIR)' && '$(TARGET)-cmake' -DBUILD_EXAMPLE=OFF '$(SOURCE_DIR)'
+    '$(TARGET)-cmake' --build '$(BUILD_DIR)' --config Release --target install
 endef
