@@ -4,8 +4,8 @@ PKG             := onetbb
 $(PKG)_WEBSITE  := https://github.com/uxlfoundation/oneTBB
 $(PKG)_DESCR    := oneAPI Threading Building Blocks
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2022.3.0
-$(PKG)_CHECKSUM := 01598a46c1162c27253a0de0236f520fd8ee8166e9ebb84a4243574f88e6e50a
+$(PKG)_VERSION  := 2023.1.0
+$(PKG)_CHECKSUM := 191288b52e1e6b17198000b64d77d194bb65e791be46ebc606e9b091781e2070
 $(PKG)_GH_CONF  := uxlfoundation/oneTBB/tags,v
 $(PKG)_DEPS     := cc
 
