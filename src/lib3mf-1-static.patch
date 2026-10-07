@@ -1,0 +1,51 @@
+diff -ur lib3mf-1.8.1.orig/CMakeLists.txt lib3mf-1.8.1/CMakeLists.txt
+--- lib3mf-1.8.1.orig/CMakeLists.txt	2019-01-08 13:36:18.000000000 +0100
++++ lib3mf-1.8.1/CMakeLists.txt	2021-11-26 21:49:47.395945764 +0100
+@@ -95,25 +95,14 @@
+ 
+ #########################################################
+ # Static library (as base for other targets)
+-add_library(${PROJECT_NAME}_s STATIC ${SRCS_MAIN_PLATFORM} ${SRCS_COMMON})
+-target_include_directories(${PROJECT_NAME}_s PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
+-target_include_directories(${PROJECT_NAME}_s PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/Include)
+-SET_TARGET_PROPERTIES(${PROJECT_NAME}_s PROPERTIES PREFIX "" IMPORT_PREFIX "")
++add_library(${PROJECT_NAME} STATIC ${SRCS_MAIN_PLATFORM} ${SRCS_COMMON})
++target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
++target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/Include)
++SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES PREFIX "" IMPORT_PREFIX "")
+ if (UNIX OR MINGW)
+-	target_compile_options(${PROJECT_NAME}_s PUBLIC "-fPIC")
+-	# Uncomment the following to but the version info into the .so-file.
+-	SET_TARGET_PROPERTIES(${PROJECT_NAME}_s PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+-	SET_TARGET_PROPERTIES(${PROJECT_NAME}_s PROPERTIES SOVERSION "${PROJECT_VERSION_MAJOR}")
+-	if (NOT APPLE)
+-		SET_TARGET_PROPERTIES(${PROJECT_NAME}_s PROPERTIES LINK_FLAGS -s)
+-	endif()
+-	if (NOT WIN32)
+-		find_library(LIBUUID_PATH uuid)
+-		if(NOT LIBUUID_PATH)
+-			message(FATAL_ERROR "libuuid not found")
+-		endif()
+-		target_link_libraries(${PROJECT_NAME}_s ${LIBUUID_PATH})
+-	endif()
++	target_compile_options(${PROJECT_NAME} PUBLIC "-fPIC")
++	SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES VERSION "${LIB3MF_VERSION_MAJOR}.${LIB3MF_VERSION_MINOR}.${LIB3MF_VERSION_MICRO}.${BUILD_NUMBER}")
++	target_link_libraries(${PROJECT_NAME} ${LIBUUID_PATH})
+ else()
+ 	# wd4996 masks the deprecated-warning
+ 	target_compile_options(${PROJECT_NAME}_s PUBLIC "$<$<CONFIG:DEBUG>:/Od;/Ob0;/Gm;/sdl;/W3;/WX;/FC;/wd4996>")
+@@ -123,13 +112,8 @@
+ 
+ #########################################################
+ # Shared library
+-add_library(${PROJECT_NAME} SHARED ${SRCS_MAIN_PLATFORM}
+-	"./Source/Model/COM/NMR_DLLInterfaces.cpp"
+-	${VERSION_FILES_OUTPUTLOCATION}
+-)
+ set(STARTUPPROJECT ${PROJECT_NAME})
+-SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES PREFIX "" IMPORT_PREFIX "")
+-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_s)
++target_link_libraries(${PROJECT_NAME})
+ if (UNIX OR MINGW)
+ 	# Uncomment the following to but the version info into the .so-file.
+ 	SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${BUILD_NUMBER}")
